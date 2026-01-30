@@ -103,65 +103,73 @@
   </joint>
 
   <!-- ================= GRIPPER BASE ================= -->
-  <link name="gripper_base_link">
-    <visual>
-      <geometry>
-        <box size="0.04 0.04 0.02"/>
-      </geometry>
-      <origin xyz="0 0 0.01"/>
-      <material name="black">
-        <color rgba="0.1 0.1 0.1 1.0"/>
-      </material>
-    </visual>
-  </link>
+  <!-- ================= GRIPPER BASE ================= -->
+<link name="gripper_base_link">
+  <visual>
+    <geometry>
+      <box size="0.04 0.04 0.02"/>
+    </geometry>
+    <origin xyz="0 0 0.01"/>
+    <material name="black">
+      <color rgba="0.1 0.1 0.1 1.0"/>
+    </material>
+  </visual>
+</link>
 
-  <joint name="gripper_mount_joint" type="fixed">
-    <parent link="wrist_link"/>
-    <child link="gripper_base_link"/>
-    <origin xyz="0 0 0.12"/>
-  </joint>
+<joint name="gripper_mount_joint" type="fixed">
+  <parent link="wrist_link"/>
+  <child link="gripper_base_link"/>
+  <origin xyz="0 0 0.12"/>
+</joint>
+
 
   <!-- ================= LEFT FINGER ================= -->
-  <link name="left_finger_link">
-    <visual>
-      <geometry>
-        <box size="0.01 0.02 0.06"/>
-      </geometry>
-      <origin xyz="0 0 0.03"/>
-      <material name="gray">
-        <color rgba="0.7 0.7 0.7 1.0"/>
-      </material>
-    </visual>
-  </link>
+  <!-- ================= LEFT FINGER ================= -->
+<link name="left_finger_link">
+  <visual>
+    <geometry>
+      <box size="0.01 0.02 0.06"/>
+    </geometry>
+    <origin xyz="0 0 0.03"/>
+    <material name="gray">
+      <color rgba="0.7 0.7 0.7 1.0"/>
+    </material>
+  </visual>
+</link>
 
-  <joint name="left_finger_joint" type="revolute">
+<joint name="left_finger_joint" type="prismatic">
   <parent link="gripper_base_link"/>
   <child link="left_finger_link"/>
   <origin xyz="0 0.02 0"/>
   <axis xyz="0 1 0"/>
-  <limit lower="0.0" upper="1.5708" effort="1" velocity="0.5"/>
-  </joint>
-
+  <!-- 0 = closed, 0.02 m = open -->
+  <limit lower="0.0" upper="0.02" effort="1" velocity="0.05"/>
+  <dynamics damping="0.2"/>
+</joint>
 
   <!-- ================= RIGHT FINGER ================= -->
-  <link name="right_finger_link">
-    <visual>
-      <geometry>
-        <box size="0.01 0.02 0.06"/>
-      </geometry>
-      <origin xyz="0 0 0.03"/>
-      <material name="gray"/>
-    </visual>
-  </link>
+  <!-- ================= RIGHT FINGER ================= -->
+<link name="right_finger_link">
+  <visual>
+    <geometry>
+      <box size="0.01 0.02 0.06"/>
+    </geometry>
+    <origin xyz="0 0 0.03"/>
+    <material name="gray">
+      <color rgba="0.7 0.7 0.7 1.0"/>
+    </material>
+  </visual>
+</link>
 
-  <joint name="right_finger_joint" type="prismatic">
-    <parent link="gripper_base_link"/>
-    <child link="right_finger_link"/>
-    <origin xyz="0 -0.02 0"/>
-    <axis xyz="0 -1 0"/>
-    <limit lower="0.0" upper="1.5708" effort="1" velocity="0.5"/>
-    <mimic joint="left_finger_joint"/>
-    <dynamics damping="0.2"/>
-  </joint>
+<joint name="right_finger_joint" type="prismatic">
+  <parent link="gripper_base_link"/>
+  <child link="right_finger_link"/>
+  <origin xyz="0 -0.02 0"/>
+  <axis xyz="0 -1 0"/>
+  <limit lower="0.0" upper="0.02" effort="1" velocity="0.05"/>
+  <mimic joint="left_finger_joint"/>
+  <dynamics damping="0.2"/>
+</joint>
+
 
 </robot>
