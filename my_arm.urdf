@@ -142,10 +142,11 @@
   <child link="left_finger_link"/>
   <origin xyz="0 0.02 0"/>
   <axis xyz="0 1 0"/>
-  <!-- 0 = closed, 0.02 m = open -->
+  <!-- 0 = open, 0.02m = closed -->
   <limit lower="0.0" upper="0.02" effort="1" velocity="0.05"/>
   <dynamics damping="0.2"/>
 </joint>
+
 
   <!-- ================= RIGHT FINGER ================= -->
   <!-- ================= RIGHT FINGER ================= -->
@@ -167,9 +168,10 @@
   <origin xyz="0 -0.02 0"/>
   <axis xyz="0 -1 0"/>
   <limit lower="0.0" upper="0.02" effort="1" velocity="0.05"/>
-  <mimic joint="left_finger_joint"/>
+  <mimic joint="left_finger_joint" multiplier="1.0"/>
   <dynamics damping="0.2"/>
 </joint>
+
 
 
 </robot>
