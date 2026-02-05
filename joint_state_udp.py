@@ -11,7 +11,6 @@ class JointStatePrinter(Node):
     def __init__(self):
         super().__init__('joint_state_printer')
 
-        # Fixed joint order (DO NOT CHANGE LATER)
         self.joint_order = [
             'base_joint',
             'shoulder_joint',
@@ -20,11 +19,7 @@ class JointStatePrinter(Node):
             'left_finger_joint'
         ]
 
-        # Neutral servo offset for arm joints
-        self.neutral_offset_deg = 90.0
-
-        # Gripper limits (from URDF / observed slider range)
-        self.gripper_max_rad = 0.020  # fully closed in RViz
+        self.gripper_max_rad = 0.020
 
         self.subscription = self.create_subscription(
             JointState,
@@ -41,33 +36,42 @@ class JointStatePrinter(Node):
         output_angles = []
 
         for joint in self.joint_order:
+
             if joint not in joint_map:
                 self.get_logger().warn(f'{joint} not found in /joint_states')
                 return
 
             ros_val = joint_map[joint]
 
-            # ================= GRIPPER =================
+            # =============== GRIPPER ==================
             if joint == 'left_finger_joint':
-                # ROS: 0.0 → gripper open
-                # ROS: 0.020 → gripper closed
-                # Servo: 90° → open, 0° → closed
-
                 normalized = ros_val / self.gripper_max_rad
                 normalized = max(0.0, min(1.0, normalized))
-
                 servo_deg = 90.0 * (1.0 - normalized)
-                servo_deg = max(0.0, min(90.0, servo_deg))
 
-                output_angles.append((joint, ros_val, servo_deg))
+            # =============== SHOULDER =================
+            elif joint == 'shoulder_joint':
+                ros_deg = math.degrees(ros_val)   # -60 → +40
+                servo_deg = ros_deg + 90.0        # maps to 30 → 130
+                servo_deg = max(30.0, min(130.0, servo_deg))
 
-            # ================= ARM JOINTS =================
+            # =============== ELBOW ====================
+            elif joint == 'elbow_joint':
+                ros_deg = math.degrees(ros_val)
+                servo_deg = max(0.0, min(90.0, ros_deg))
+
+            # =============== WRIST ====================
+            elif joint == 'wrist_joint':
+                ros_deg = math.degrees(ros_val)
+                servo_deg = max(0.0, min(120.0, ros_deg))
+
+            # =============== BASE =====================
             else:
                 ros_deg = math.degrees(ros_val)
-                servo_deg = ros_deg + self.neutral_offset_deg
+                servo_deg = ros_deg + 90.0
                 servo_deg = max(0.0, min(180.0, servo_deg))
 
-                output_angles.append((joint, ros_val, servo_deg))
+            output_angles.append((joint, ros_val, servo_deg))
 
         self.get_logger().info('--- Joint Angles ---')
         for joint, ros, servo in output_angles:
