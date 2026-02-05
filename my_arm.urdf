@@ -1,0 +1,177 @@
+<?xml version="1.0"?>
+<robot name="simple_arm">
+
+  <!-- ================= FIXED BASE ================= -->
+  <link name="base_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.07" length="0.02"/>
+      </geometry>
+      <origin xyz="0 0 0.01"/>
+      <material name="dark_gray">
+        <color rgba="0.3 0.3 0.3 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <!-- ================= ROTATING BASE ================= -->
+  <link name="base_rot_link">
+    <visual>
+      <geometry>
+        <cylinder radius="0.05" length="0.04"/>
+      </geometry>
+      <origin xyz="0 0 0.02"/>
+      <material name="gray">
+        <color rgba="0.6 0.6 0.6 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="base_joint" type="revolute">
+    <parent link="base_link"/>
+    <child link="base_rot_link"/>
+    <origin xyz="0 0 0.02"/>
+    <axis xyz="0 0 1"/>
+    <limit lower="-1.5708" upper="1.5708" effort="5" velocity="1"/>
+    <dynamics damping="0.5"/>
+  </joint>
+
+  <!-- ================= SHOULDER ================= -->
+  <link name="shoulder_link">
+    <visual>
+      <geometry>
+        <box size="0.04 0.04 0.18"/>
+      </geometry>
+      <origin xyz="0 0 0.09"/>
+      <material name="blue">
+        <color rgba="0.2 0.2 0.8 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="shoulder_joint" type="revolute">
+    <parent link="base_rot_link"/>
+    <child link="shoulder_link"/>
+    <origin xyz="0 0 0.04"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0.5236" upper="2.2689" effort="5" velocity="1"/>
+    <dynamics damping="0.6"/>
+  </joint>
+
+  <!-- ================= ELBOW ================= -->
+  <link name="elbow_link">
+    <visual>
+      <geometry>
+        <box size="0.04 0.04 0.18"/>
+      </geometry>
+      <origin xyz="0 0 0.09"/>
+      <material name="green">
+        <color rgba="0.2 0.8 0.2 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="elbow_joint" type="revolute">
+    <parent link="shoulder_link"/>
+    <child link="elbow_link"/>
+    <origin xyz="0 0 0.18"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0.0" upper="1.5708" effort="5" velocity="1"/>
+    <dynamics damping="0.6"/>
+  </joint>
+
+  <!-- ================= WRIST ================= -->
+  <link name="wrist_link">
+    <visual>
+      <geometry>
+        <box size="0.03 0.03 0.12"/>
+      </geometry>
+      <origin xyz="0 0 0.06"/>
+      <material name="red">
+        <color rgba="0.8 0.2 0.2 1.0"/>
+      </material>
+    </visual>
+  </link>
+
+  <joint name="wrist_joint" type="revolute">
+    <parent link="elbow_link"/>
+    <child link="wrist_link"/>
+    <origin xyz="0 0 0.18"/>
+    <axis xyz="0 1 0"/>
+    <limit lower="0.0" upper="2.0944" effort="3" velocity="1"/>
+    <dynamics damping="0.4"/>
+  </joint>
+
+  <!-- ================= GRIPPER BASE ================= -->
+  <!-- ================= GRIPPER BASE ================= -->
+<link name="gripper_base_link">
+  <visual>
+    <geometry>
+      <box size="0.04 0.04 0.02"/>
+    </geometry>
+    <origin xyz="0 0 0.01"/>
+    <material name="black">
+      <color rgba="0.1 0.1 0.1 1.0"/>
+    </material>
+  </visual>
+</link>
+
+<joint name="gripper_mount_joint" type="fixed">
+  <parent link="wrist_link"/>
+  <child link="gripper_base_link"/>
+  <origin xyz="0 0 0.12"/>
+</joint>
+
+
+  <!-- ================= LEFT FINGER ================= -->
+  <!-- ================= LEFT FINGER ================= -->
+<link name="left_finger_link">
+  <visual>
+    <geometry>
+      <box size="0.01 0.02 0.06"/>
+    </geometry>
+    <origin xyz="0 0 0.03"/>
+    <material name="gray">
+      <color rgba="0.7 0.7 0.7 1.0"/>
+    </material>
+  </visual>
+</link>
+
+<joint name="left_finger_joint" type="prismatic">
+  <parent link="gripper_base_link"/>
+  <child link="left_finger_link"/>
+  <origin xyz="0 0.02 0"/>
+  <axis xyz="0 1 0"/>
+  <!-- 0 = open, 0.02m = closed -->
+  <limit lower="0.0" upper="0.02" effort="1" velocity="0.05"/>
+  <dynamics damping="0.2"/>
+</joint>
+
+
+  <!-- ================= RIGHT FINGER ================= -->
+  <!-- ================= RIGHT FINGER ================= -->
+<link name="right_finger_link">
+  <visual>
+    <geometry>
+      <box size="0.01 0.02 0.06"/>
+    </geometry>
+    <origin xyz="0 0 0.03"/>
+    <material name="gray">
+      <color rgba="0.7 0.7 0.7 1.0"/>
+    </material>
+  </visual>
+</link>
+
+<joint name="right_finger_joint" type="prismatic">
+  <parent link="gripper_base_link"/>
+  <child link="right_finger_link"/>
+  <origin xyz="0 -0.02 0"/>
+  <axis xyz="0 -1 0"/>
+  <limit lower="0.0" upper="0.02" effort="1" velocity="0.05"/>
+  <mimic joint="left_finger_joint" multiplier="1.0"/>
+  <dynamics damping="0.2"/>
+</joint>
+
+
+
+</robot>
